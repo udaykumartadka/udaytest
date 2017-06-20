@@ -1,0 +1,48 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "StorageAccountName": {
+            "type": "string",
+            "defaultValue": "udaytstorage"
+       
+        },
+        "location": {
+            "defaultValue": "eastus",
+            "type": "string"
+        },
+        "storageSKU": {
+            "type": "string",
+            "allowedValues": [
+                "Standard_LRS",
+                "Standard_ZRS",
+                "Standard_GRS",
+                "Standard_RAGRS",
+                "Premium_LRS"
+            ],
+           "defaultValue": "Standard_LRS"
+        }
+        
+   
+    },
+    "variables": {
+        "storageName":"[concat(parameters('StorageAccountName'),substring(uniqueString(resourceGroup().id),4,8))]"
+        
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2016-01-01",
+            "sku":{
+               "name":"[parameters('storageSKU')]"
+           },
+            "kind": "Storage",
+            "name": "[variables('storageName')]",
+            "location": "[parameters('location')]",
+            "tags": {},
+            "properties": {}
+        }
+
+        
+    ]
+}
