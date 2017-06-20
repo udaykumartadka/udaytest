@@ -1,0 +1,269 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": { 
+        "StorageAccountName": {
+            "type": "string",
+            "defaultValue": "udaytstorage"
+       
+       },
+
+       "windowsOSVersion": {
+            "type": "string",
+            "defaultValue": "2008-R2-SP1",
+            "allowedValues": [
+                "2008-R2-SP1",
+                "2012-Datacenter",
+                "2012-R2-Datacenter",
+                "2016-Nano-Server",
+                "2016-Datacenter-with-Containers",
+                "2016-Datacenter"
+            ]
+
+        },
+
+        "storageSKU": {
+            "type": "string",
+            "allowedValues": [
+                "Standard_LRS",
+                "Standard_ZRS",
+                "Standard_GRS",
+                "Standard_RAGRS",
+                "Premium_LRS"
+            ],
+           "defaultValue": "Standard_LRS"
+        },
+
+        "location": {
+ 	        "type": "string",
+ 	        "defaultValue": "eastus",
+ 	            "allowedValues": [
+ 	                "brazilsouth",
+ 	                "eastasia",
+ 	                "eastus",
+ 	                "japaneast",
+ 	                "japanwest",
+ 	                "northcentralus",
+ 	                "northeurope",
+ 	                "southcentralus",
+ 	                "westeurope",
+ 	                "westus",
+ 	                "southeastasia",
+ 	                "centralus",
+ 	                "eastus2"
+ 	            ],
+ 	        "metadata": {
+ 	            "description": "Deployments Location"
+ 	        }
+
+        }
+    },
+
+    "variables": { 
+        "vmName": "UdayVM",
+        "vmNickName":"udayVmNic",
+        "storageName": "[concat(parameters('StorageAccountName'),substring(uniqueString(resourceGroup().id),4,8))]",
+        "NSGName":"udayVmNSG",
+        "VnetName":"udayVnet",
+        "publicIPadd":"udaypublicIP"
+     },
+
+   "resources": [
+    {
+       
+       "type": "Microsoft.Storage/storageAccounts",
+       "name": "[variables('storageName')]",
+       "apiVersion": "2016-01-01",
+       "sku": {
+            "name": "[parameters('storageSKU')]"
+        },
+        "kind": "Storage",
+        "location":"[parameters('location')]",
+        "properties": {
+         }
+    },
+
+    {
+        "type":"Microsoft.Network/networkSecurityGroups",
+        "name":"[variables('NSGName')]",
+        "apiVersion": "2015-05-01-preview",
+        "location":"[parameters('location')]",
+        "properties": {
+            "securityRules":[
+                {
+                    "name":"default-allow-rdp",
+                    "properties":{
+
+                        "protocol":"Tcp",
+                        "sourcePortRange": "*",
+                        "destinationPortRange": "3389",
+                        "sourceAddressPrefix": "*",
+                        "destinationAddressPrefix": "*",
+                        "access":"Allow",
+                        "priority":1000,
+                        "direction":"Inbound"
+                    }
+
+                         
+                }
+            ]
+        },
+        "dependsOn": [] 
+    },
+
+    {
+        "type":"Microsoft.Network/publicIPAddresses",
+        "name": "[variables('publicIPadd')]",
+        "apiVersion": "2017-03-01",
+        "location":"[parameters('location')]",
+        "properties": {
+            
+            "publicIPAllocationMethod":"Dynamic",
+            "idleTimeoutInMinutes":4
+        },
+        "dependsOn": []
+
+    },
+
+    {
+        "type":"Microsoft.Network/virtualNetworks",
+        "name": "[variables('VnetName')]",
+        "apiVersion": "2017-03-01",
+        "location":"[parameters('location')]",
+        "properties": {
+            
+            "addressSpace":{
+                "addressPrefixes": [
+                    "10.2.1.0/24"
+                ]
+            },
+            "subnets":[
+                {
+                    "name": "subnet1",
+                    "properties": {
+                        "addressPrefix":"10.2.1.0/24"
+                    }
+                }
+            ],
+            "virtualNetworkPeerings":[] 
+        },
+        "dependsOn": []
+
+    },
+
+    {
+        "type":"Microsoft.Network/networkInterfaces",
+        "name": "[variables('vmNickName')]",
+        "apiVersion": "2017-03-01",
+        "location":"[parameters('location')]",
+        "properties": {
+            
+            "ipConfigurations":[
+                {
+                    "name": "ipconfig1",
+                    "properties": {
+                        
+                        "privateIPAddress": "10.2.1.4",
+                        "privateIPAllocationMethod":"Dynamic",
+                        "publicIPAddress": {
+                            
+                            "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPadd'))]"
+                        },
+                        "subnet": {
+                            
+                            "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',variables('VnetName')),'/subnets/subnet1')]"
+                        }
+                    }
+                }
+            ],
+            "dnsSettings":{
+                "dnsServers":[]
+            },
+            "enableIPForwarding":false,
+            "networkSecurityGroup":{
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups',variables('NSGName'))]"
+            }
+
+        },
+
+        "dependsOn": [
+            "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPadd'))]",
+            "[resourceId('Microsoft.Network/virtualNetworks',variables('VnetName'))]",
+            "[resourceId('Microsoft.Network/networkSecurityGroups',variables('NSGName'))]"
+        ]
+
+
+
+    },
+
+    {
+        "type": "Microsoft.Compute/virtualMachines",
+        "name": "[variables('vmName')]",
+        "apiVersion": "2016-04-30-preview",
+        "location": "[parameters('location')]",
+        "properties": {
+           
+            "hardwareProfile": {
+                 "vmSize": "Standard_A2"
+            },
+
+            "osProfile": {
+                "computerName": "[variables('vmName')]",
+                "adminUsername": "ukumart",
+                "adminPassword": "Password$12345",
+                "windowsConfiguration": {
+                    "provisionVMAgent": true,
+                    "enableAutomaticUpdates": true
+                },
+                "secrets":[]
+                
+            },
+
+            "storageProfile": {
+                "imageReference": {
+                 "publisher": "MicrosoftWindowsServer",
+                 "offer": "WindowsServer",
+                 "sku": "[parameters('windowsOSVersion')]",
+                 "version": "latest"
+                },
+
+                "osDisk": {
+                    "osType": "Windows",
+                    "name": "[variables('vmName')]",
+                    "vhd": {
+                            "uri": "[concat('https://',variables('storageName'), '.blob.core.windows.net', concat('/vhds/', variables('vmName'),'.vhd'))]"
+                    },
+                    "createOption": "FromImage",
+                     "caching": "ReadWrite"
+                },
+
+                "dataDisks":[]
+            },
+
+
+            "networkProfile": {
+                "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('vmNickName'))]"
+                        }
+                    ]
+           },
+
+           "licenseType": "Windows_Server"
+
+
+            
+
+        },
+
+        "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts',variables('storageName'))]",
+                "[resourceId('Microsoft.Network/networkInterfaces', variables('vmNickName'))]"
+               
+            ]
+    }
+
+   ],
+
+    "outputs": {  }
+}
