@@ -1,0 +1,110 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    
+    "parameters": {
+
+        "location": {
+            "type": "string"
+        },
+
+        "adminPassword": {
+            "type": "securestring"
+        },
+
+        "storageAccountName": {
+            "type": "string",
+            "defaultValue": "udaytstorage"
+        },
+
+        "storageSKU": {
+            "type": "string"
+
+        }
+    },
+
+
+    "variables": {
+
+         "comment_storage":"below variables are for storage",        
+         "storageName":"[concat(parameters('StorageAccountName'),substring(uniqueString(resourceGroup().id),4,8))]",
+         "storageAccounturl":"https://github.com/udaykumartadka/udaytest/blob/master/storageAccount.json",
+
+         "comment_Vnet" : "below variables are for Vnet",
+         "addressPrefix": "10.2.4.0/24",
+         "vnetName": "udayVnet",
+         "subnetName":"udaySubnet",
+         "subnetPrefix":"10.2.4.0/24",
+         "vnetConfigurl":""
+
+
+
+
+        
+    },
+
+
+    "resources": [
+            {
+            "type": "Microsoft.Resources/deployments",
+            "name": "storagesetup",
+            "apiVersion": "2015-01-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('storageAccounturl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "storageAccount": {
+                        "value": "[variables('storageName')]"
+                    }
+                    
+                }
+            }
+        },
+
+        {
+            "name": "VnetConfig",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('vnetConfigurl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "addressPrefixes": {
+                        "value": "[variables('addressPrefixes')]"
+                    },
+                    "vnetName": {
+                        "value": "[variables('vnetName')]"
+                    },
+                    "subnetName": {
+                        "value": "[variables('subnetName')]"
+                    },
+                    "subPrefix": {
+                        "value": "[variables('subnetPrefix')]"
+                    }
+                }
+            }
+        }
+
+        
+    ],
+
+
+    "outputs": {
+        
+    }
+    
+
+
+}
