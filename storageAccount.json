@@ -10,10 +10,6 @@
         "location": {
             "type": "string",
             "defaultValue": "eastus"
-        },
-        "storageSKU": {
-            "type": "string"
-
         }
         
    
@@ -26,7 +22,8 @@
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2016-01-01",
             "sku":{
-               "name":"[parameters('storageSKU')]"
+               "name":"Premium_LRS",
+                "tier": "Premium"
            },
             "kind": "Storage",
             "name": "[parameters('storageAccountName')]",
