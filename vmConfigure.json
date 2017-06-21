@@ -8,9 +8,9 @@
         "location": {
             "type": "string"
         },
-       "adminUsername":{
-           "type": "string"
-       },
+        "adminUsername": {
+            "type": "string"
+        },
         "adminPassword": {
             "type": "string"
         },
@@ -39,7 +39,6 @@
     "variables": {},
     "resources": [
         {
-             
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[parameters('vmName')]",
             "apiVersion": "2016-04-30-preview",
@@ -79,7 +78,6 @@
                         "disablePasswordAuthentication": false
                     },
                     "secrets": []
-                    
                 },
                 "networkProfile": {
                     "networkInterfaces": [
@@ -88,9 +86,7 @@
                         }
                     ]
                 }
-                    
-                }
             }
-        
+        }
     ]
 }
