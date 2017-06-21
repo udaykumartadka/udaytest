@@ -5,16 +5,16 @@
         "location": {
             "type": "string"
         },
-        "nicName": {
+        "nicNameP": {
             "type": "string"
         },
-        "publicIpName": {
+        "publicIpNameP": {
             "type": "string"
         },
-        "subnetRef": {
+        "subnetRefP": {
             "type": "string"
         },
-        "NsgName": {
+        "NsgNameP": {
             "type": "string"
         }
     },
@@ -22,9 +22,9 @@
     "resources": [
         {
             "type": "Microsoft.Network/networkInterfaces",
-            "name": "[parameters('nicName')]",
+            "name": "[parameters('nicNameP')]",
             "apiVersion": "2016-03-30",
-            "location": "westus",
+            "location": "[parameters('location')]",
             "properties": {
                 "ipConfigurations": [
                     {
@@ -33,10 +33,10 @@
                             "privateIPAddress": "10.4.2.4",
                             "privateIPAllocationMethod": "Dynamic",
                             "publicIPAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPName'))]"
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpNameP'))]"
                             },
                             "subnet": {
-                                "id": "[parameters('subnetRef')]"
+                                "id": "[parameters('subnetRefP')]"
                             }
                         }
                     }
@@ -46,7 +46,7 @@
                 },
                 "enableIPForwarding": false,
                 "networkSecurityGroup": {
-                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('NsgName'))]"
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('NsgNameP'))]"
                 }
             }
         }
