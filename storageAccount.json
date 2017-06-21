@@ -23,13 +23,12 @@
             "kind": "Storage",
             "name": "[parameters('storageName')]",
             "location": "[parameters('location')]",
-            "windowsOSVsn":"[parameters('windowsOSVersion')]",
+            "windowsOSVersion":"[parameters('windowsOSVersion')]",
             "sku":{
                 "name":"[parameters(storageSKU)]"
             },
             "tags": {},
             "properties": {}
-            
         }
     ]
 }
