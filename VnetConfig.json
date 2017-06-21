@@ -5,7 +5,7 @@
         "vnetName": {
             "type": "string"
         },
-         "location": {
+        "location": {
             "type": "string",
             "defaultValue": "eastus"
         },
@@ -13,14 +13,14 @@
             "type": "string"
         },
         "subnetName": {
-              "type": "string"
+            "type": "string"
         },
         "subnetPrefix": {
             "type": "string"
         }
     },
     "variables": {},
-   "resources": [
+    "resources": [
         {
             "name": "[parameters('vnetName')]",
             "type": "Microsoft.Network/virtualNetworks",
