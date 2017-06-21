@@ -7,6 +7,12 @@
         },
         "location": {
             "type": "string"
+        },
+        "windowsOSVersion":{
+            "type": "string"
+        },
+        "storageSKU":{
+            "type": "string"
         }
     },
     "variables": {},
@@ -14,13 +20,13 @@
         {
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2016-01-01",
-            "sku": {
-                "name": "Premium_LRS",
-                "tier": "Premium"
-            },
             "kind": "Storage",
             "name": "[parameters('storageName')]",
             "location": "[parameters('location')]",
+            "windowsOSVsn":"[parameters('windowsOSVersion')]",
+            "sku":{
+                "name":"[parameters(storageSKU)]"
+            },
             "tags": {},
             "properties": {}
         }
