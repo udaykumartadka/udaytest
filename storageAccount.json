@@ -4,34 +4,25 @@
     "parameters": {
         "StorageAccountName": {
             "type": "string"
-           
-
         },
         "location": {
             "type": "string"
-            
         }
-        
-   
     },
-    "variables": {
-        
-    },
+    "variables": {},
     "resources": [
         {
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2016-01-01",
-            "sku":{
-               "name":"Premium_LRS",
+            "sku": {
+                "name": "Premium_LRS",
                 "tier": "Premium"
-           },
+            },
             "kind": "Storage",
             "name": "[parameters('storageAccountName')]",
             "location": "[parameters('location')]",
             "tags": {},
             "properties": {}
         }
-
-        
     ]
 }
