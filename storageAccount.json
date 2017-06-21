@@ -3,7 +3,8 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "StorageAccountName": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "udaytstorage"
 
         },
         "location": {
@@ -11,15 +12,8 @@
             "defaultValue": "eastus"
         },
         "storageSKU": {
-            "type": "string",
-            "allowedValues": [
-                "Standard_LRS",
-                "Standard_ZRS",
-                "Standard_GRS",
-                "Standard_RAGRS",
-                "Premium_LRS"
-            ],
-           "defaultValue": "Standard_LRS"
+            "type": "string"
+
         }
         
    
