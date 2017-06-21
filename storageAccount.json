@@ -5,14 +5,22 @@
         "storageName": {
             "type": "string"
         },
+        "storageAccType": {
+            "type": "string",
+            "defaultValue": "Premium_LRS"
+        },
         "location": {
             "type": "string"
         },
-        "windowsOSVersion":{
-            "type": "string"
-        },
-        "storageSKU":{
-            "type": "string"
+        "tag": {
+            "type": "object",
+            "defaultValue": {
+                "key1": "key",
+                "value1": "value"
+            },
+            "metadata": {
+                "description": "Tag Values"
+            }
         }
     },
     "variables": {},
@@ -20,15 +28,19 @@
         {
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2016-01-01",
+            "sku": {
+                "name": "Premium_LRS",
+                "tier": "Premium"
+            },
             "kind": "Storage",
             "name": "[parameters('storageName')]",
             "location": "[parameters('location')]",
-            "windowsOSVersion":"[parameters('windowsOSVersion')]",
-            "sku":{
-                "name":"[parameters(storageSKU)]"
+            "tags": {
+                "[parameters('tag').key1]": "[parameters('tag').value1]"
             },
-            "tags": {},
-            "properties": {}
+            "properties": {
+                "storageAccType": "[parameters('storageAccType')]"
+            }
         }
     ]
 }
