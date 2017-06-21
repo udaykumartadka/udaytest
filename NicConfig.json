@@ -3,32 +3,24 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "location": {
-            "type": "string"        
+            "type": "string"
         },
-        
-        
         "nicName": {
             "type": "string"
-            },
-        
+        },
         "publicIpName": {
             "type": "string"
-            },
-        "subnetRef": {
-            "type": "string"       
         },
-        "NsgName":{
+        "subnetRef": {
+            "type": "string"
+        },
+        "NsgName": {
             "type": "string"
         }
-
-    
     },
-
     "variables": {},
-
     "resources": [
-        {  
-        
+        {
             "type": "Microsoft.Network/networkInterfaces",
             "name": "[parameters('nicName')]",
             "apiVersion": "2016-03-30",
@@ -43,12 +35,11 @@
                             "publicIPAddress": {
                                 "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPName'))]"
                             },
-                               "subnet": {
+                            "subnet": {
                                 "id": "[parameters('subnetRef')]"
                             }
-                            }
                         }
-                    
+                    }
                 ],
                 "dnsSettings": {
                     "dnsServers": []
@@ -60,5 +51,4 @@
             }
         }
     ]
-
 }
