@@ -3,13 +3,13 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "StorageAccountName": {
-            "type": "string",
-            "defaultValue": "udaytstorage"
+            "type": "string"
+           
 
         },
         "location": {
-            "type": "string",
-            "defaultValue": "eastus"
+            "type": "string"
+            
         }
         
    
