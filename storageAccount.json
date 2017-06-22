@@ -5,9 +5,8 @@
         "storageName": {
             "type": "string"
         },
-        "storageAccType": {
-            "type": "string",
-            "defaultValue": "Premium_LRS"
+        "skuP": {
+            "type": "string"
         },
         "location": {
             "type": "string"
@@ -39,7 +38,7 @@
                 "[parameters('tag').key1]": "[parameters('tag').value1]"
             },
             "properties": {
-                "storageAccType": "[parameters('storageAccType')]"
+                "sku":"[parameters('skuP')]"
             }
         }
     ]
