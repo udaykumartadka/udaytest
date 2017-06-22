@@ -1,0 +1,318 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "storageAccName": {
+            "type": "string",
+            "defaultValue": "udaytstorage"
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "eastus"
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "defaultValue": "Password$12345"
+        },
+        "adminUserName": {
+            "type": "string",
+            "defaultValue": "UdayAdmin"
+        },
+        "publicIPName": {
+            "type": "string",
+            "defaultValue": "udayPublicIP"
+        },
+        "publicIPType": {
+            "type": "string",
+            "defaultValue": "Dynamic"
+        },
+        "publicIPConfig": {
+            "type": "string",
+            "defaultValue": "https://raw.githubusercontent.com/udaykumartadka/udaytest/master/publicIPConfig.json"
+        },
+        "storageAccounturl": {
+            "type": "string",
+            "defaultValue": "https://raw.githubusercontent.com/udaykumartadka/udaytest/master/storageAccount.json"
+        },
+        "addressPrefixes": {
+            "type": "string",
+            "defaultValue": "10.2.1.0/24"
+        },
+        "vnetName": {
+            "type": "string",
+            "defaultValue": "udayVnet"
+        },
+        "subnetName": {
+            "type": "string",
+            "defaultValue": "udaySubnet"
+        },
+        "subnetPrefix": {
+            "type": "string",
+            "defaultValue": "10.2.1.0/24"
+        },
+        "vnetConfig": {
+            "type": "string",
+            "defaultValue": "https://raw.githubusercontent.com/udaykumartadka/udaytest/master/VnetConfig.json"
+        },
+        "NsgName": {
+            "type": "string",
+            "defaultValue": "udayNSG"
+        },
+        "nicNameP": {
+            "type": "string",
+            "defaultValue": "udayNic"
+        },
+        "neticConfig": {
+            "type": "string",
+            "defaultValue": "https://raw.githubusercontent.com/udaykumartadka/udaytest/master/NicConfig.json"
+        },
+        "vmNameP": {
+            "type": "string",
+            "defaultValue": "udayVM"
+        },
+        "windowsOSVP": {
+            "type": "string",
+            "defaultValue": "2008-R2-SP1",
+            "allowedValues": [
+                "2008-R2-SP1",
+                "2012-Datacenter",
+                "2012-R2-Datacenter",
+                "2016-Nano-Server",
+                "2016-Datacenter-with-Containers",
+                "2016-Datacenter"
+            ]
+        },
+        "storageSKU": {
+            "type": "string",
+            "allowedValues": [
+                "Standard_LRS",
+                "Standard_ZRS",
+                "Standard_GRS",
+                "Standard_RAGRS",
+                "Premium_LRS"
+            ],
+            "defaultValue": "Standard_LRS"
+        },
+        "vmConfig":{
+            "type": "string",
+            "defaultValue": "https://raw.githubusercontent.com/udaykumartadka/udaytest/master/vmConfigure.json"
+        }
+    },
+    "variables": {
+        "loc": "[parameters('location')]",
+        "comment_storage": "below variables are for storage",
+        "storageAccountName": "[concat(parameters('storageAccName'),substring(uniqueString(resourceGroup().id),0,4))]",
+        "storageAccUrl": "[parameters('storageAccounturl')]",
+        "sku": "[parameters('storageSKU')]",
+        "comment_NSG": "below variables are for NSG",
+        "NsgName": "[parameters('nsgName')]",
+        "comment_PublicIP": "below variables are for PublicIPAddress",
+        "publicipName": "[parameters('publicIPName')]",
+        "publicipType": "[parameters('publicIPType')]",
+        "publicipConfigUrl": "[parameters('publicIPConfig')]",
+        "comment_Vnet": "below variables are for Vnet",
+        "addressPrefix": "[parameters('addressPrefixes')]",
+        "vNetName": "[parameters('vnetName')]",
+        "subNetName": "[parameters('subNetName')]",
+        "subNetPrefix": "[parameters('subnetPrefix')]",
+        "vNetConfigurl": "[parameters('vnetConfig')]",
+        "comment_NetworkInterface": "below variables are for Network Interface",
+        "nicName": "[parameters('nicNameP')]",
+        "vnetRef": "[resourceId('Microsoft.Network/virtualNetworks',variables('vNetName'))]",
+        "subnetRef": "[concat(variables('vnetRef'),'/subnets/',variables('subNetName'))]",
+        "neticConfigUrl": "[parameters('neticConfig')]",
+        "comment_VM": "below variables are for Virtual Machine",
+        "vmName": "[parameters('vmNameP')]",
+        "windowsOSVersion": "[parameters('windowsOSVP')]",
+        "adminUser": "[parameters('adminUserName')]",
+        "adminPwd": "[parameters('adminPassword')]",
+        "vmConfigUrl":"[parameters('vmConfig')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "storageConfig",
+            "apiVersion": "2015-01-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('storageAccUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[variables('loc')]"
+                    },
+                    "storageName": {
+                        "value": "[variables('storageAccountName')]"
+                    },
+                    "skuP": {
+                        "value": "[variables('sku')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[variables('NsgName')]",
+            "apiVersion": "2016-03-30",
+            "location": "eastus",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "default-allow-ssh",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "22",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1000,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "webapp-inbound",
+                        "properties": {
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "8080",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1010,
+                            "direction": "Inbound"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "VnetConfig",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('vNetConfigurl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[variables('loc')]"
+                    },
+                    "addressPrefixes": {
+                        "value": "[variables('addressPrefix')]"
+                    },
+                    "vnetName": {
+                        "value": "[variables('vNetName')]"
+                    },
+                    "subnetName": {
+                        "value": "[variables('subNetName')]"
+                    },
+                    "subnetPrefix": {
+                        "value": "[variables('subNetPrefix')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "publicIpConfig",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('publicipConfigUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[variables('loc')]"
+                    },
+                    "publicIPName": {
+                        "value": "[variables('publicipName')]"
+                    },
+                    "publicIPType": {
+                        "value": "[variables('publicipType')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "nicConfig",
+            "dependsOn": [
+                "VnetConfig",
+                "[concat('Microsoft.Network/networkSecurityGroups/',variables('NsgName'))]",
+                "publicIpConfig"
+            ],
+            "apiVersion": "2016-09-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('neticConfigUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[variables('loc')]"
+                    },
+                    "nicNameP": {
+                        "value": "[variables('nicName')]"
+                    },
+                    "NsgNameP": {
+                        "value": "[variables('NsgName')]"
+                    },
+                    "publicIpNameP": {
+                        "value": "[variables('publicipName')]"
+                    },
+                    "subnetRefP": {
+                        "value": "[variables('subnetRef')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "VmConfig",
+            "dependsOn": [
+                "nicConfig",
+                "storageConfig"
+            ],
+            "apiVersion": "2015-01-01",
+            "properties": {
+                
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('vmConfigUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[variables('loc')]"
+                    },
+                    "vmNameP": {
+                        "value": "[variables('vmName')]"
+                    },
+                    "windowsOSP": {
+                        "value": "[variables('windowsOSVersion')]"
+                    },
+                    "nicNameP": {
+                        "value": "[variables('nicName')]"
+                    },
+                    "adminUserNameP": {
+                        "value": "[variables('adminUser')]"
+                    },
+                    "adminPasswordP": {
+                        "value": "[variables('adminPwd')]"
+                    },
+                    "storageNameP": {
+                        "value": "[variables('storageAccountName')]"
+                    }
+                }
+            }
+        }
+    ]
+}
