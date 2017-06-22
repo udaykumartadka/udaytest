@@ -1,5 +1,5 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "vmNameP": {
@@ -31,7 +31,7 @@
         {
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[parameters('vmNameP')]",
-            "apiVersion": "2015-06-15",
+            "apiVersion": "2015-05-01-preview",
             "location": "eastus",
             "properties": {
                 "hardwareProfile": {
