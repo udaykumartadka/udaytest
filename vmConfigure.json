@@ -20,7 +20,8 @@
         "storageNameP": {
             "type": "string"
         },
-        "skuP":{
+
+        "windowsOSP":{
             "type": "string"
         }
 
@@ -40,7 +41,7 @@
                     "imageReference": {
                         "publisher": "MicrosoftWindowsServers",
                         "offer": "WindowsServer",
-                        "sku": "[parameters('skuP')]",
+                        "sku": "[parameters('windowsOSP')]",
                         "version": "latest"
                     },
                     "osDisk": {
