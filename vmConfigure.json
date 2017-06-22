@@ -42,7 +42,7 @@
                         "publisher": "MicrosoftWindowsServers",
                         "offer": "WindowsServer",
                         "sku": "[parameters('windowsOSP')]",
-                        "version": ""
+                        "version": "7.5"
                         
                     },
                     "osDisk": {
