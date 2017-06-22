@@ -3,11 +3,12 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "location": {
-            "type": "string",
-            "defaultValue": "eastus"
+            "type": "string"
+            
         },
         "publicIpName": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "webgoatpip"
         },
         "publicIpType": {
             "type": "string"
