@@ -27,19 +27,16 @@
         {
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2016-01-01",
-            "sku": {
-                "name": "Premium_LRS",
-                "tier": "Premium"
+            "sku":{
+                "name":"[parameters('skuP')]"
             },
             "kind": "Storage",
             "name": "[parameters('storageName')]",
             "location": "[parameters('location')]",
             "tags": {
                 "[parameters('tag').key1]": "[parameters('tag').value1]"
-            },
-            "properties": {
-                "sku":"[parameters('skuP')]"
             }
+
         }
     ]
 }
