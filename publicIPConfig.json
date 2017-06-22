@@ -6,30 +6,25 @@
             "type": "string"
             
         },
-        "publicIpName": {
+        "publicIPName": {
             "type": "string",
             "defaultValue": "webgoatpip"
         },
-        "publicIpType": {
-            "type": "string"
-        },
-        "uniqueNamePrefix": {
+        "publicIPType": {
             "type": "string"
         }
+
     },
     "variables": {},
     "resources": [
         {
             "type": "Microsoft.Network/publicIPAddresses",
-            "name": "[parameters('publicIpName')]",
+            "name": "[parameters('publicIPName')]",
             "apiVersion": "2016-03-30",
             "location": "[parameters('location')]",
             "properties": {
-                "publicIPAllocationMethod": "[parameters('publicIpType')]",
-                "idleTimeoutInMinutes": 4,
-                "dnsSettings": {
-                    "domainNameLabel": "[parameters('uniqueNamePrefix')]"
-                }
+                "publicIPAllocationMethod": "[parameters('publicIPType')]",
+                "idleTimeoutInMinutes": 4
             }
         }
     ]
