@@ -1,5 +1,5 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "vmNameP": {
@@ -20,18 +20,16 @@
         "storageNameP": {
             "type": "string"
         },
-
-        "windowsOSP":{
+        "windowsOSP": {
             "type": "string"
         }
-
     },
     "variables": {},
     "resources": [
         {
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[parameters('vmNameP')]",
-            "apiVersion": "2015-05-01-preview",
+            "apiVersion": "2015-06-15",
             "location": "eastus",
             "properties": {
                 "hardwareProfile": {
@@ -39,11 +37,10 @@
                 },
                 "storageProfile": {
                     "imageReference": {
-                        "publisher": "MicrosoftWindowsServers",
+                        "publisher": "MicrosoftWindowsServer",
                         "offer": "WindowsServer",
                         "sku": "[parameters('windowsOSP')]",
-                        "version": "Standard"
-                        
+                        "version": "latest"
                     },
                     "osDisk": {
                         "osType": "windows",
@@ -60,9 +57,9 @@
                     "computerName": "[parameters('vmNameP')]",
                     "adminUsername": "[parameters('adminUserNameP')]",
                     "adminPassword": "[parameters('adminPasswordP')]",
-                    "windowsConfiguration":{
-                        "provisionVMAgent":true,
-                        "enableAutomaticUpdates":true
+                    "windowsConfiguration": {
+                        "provisionVMAgent": true,
+                        "enableAutomaticUpdates": true
                     },
                     "secrets": []
                 },
@@ -73,8 +70,6 @@
                         }
                     ]
                 }
-                
-                
             }
         }
     ]
